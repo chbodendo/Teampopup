@@ -1,0 +1,5 @@
+@charset "utf-8";
+@import url("../../odendoPopupTheme.css");
+
+#auctionButtonImageContainer,
+#businessUnitContainer a { background-image: url("icon.png"); }
