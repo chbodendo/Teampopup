@@ -11,10 +11,7 @@ OdendoAuctionsWidget.auctionPopup = (function(){
 	return{
 		initiate : function (){
 			//checks if mobile device
-			//http://magentohostsolution.com/3-ways-detect-mobile-device-jquery/
-			if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
-				return;
-			}else
+			//http://magentohostsolution.com/3-ways-detect-mobile-device-jquery/	
 				//this code checks for jQuery and load jQuery if it is not there
 				//**//  http://css-tricks.com/snippets/jquery/load-jquery-only-if-not-present/  //**//
 				// Only do something if jQuery isn't defined
@@ -45,10 +42,9 @@ OdendoAuctionsWidget.auctionPopup = (function(){
 						console.log('Super failsafe - still somehow failed...');
 					} else {
 					    console.log('jQuery loaded! Make sure to use .noConflict just in case');
-
-					    jQuery2 = jQuery;
+					    jQuery2 = jQuery;						
 					    jQuery.noConflict(true);
-					    jQuery2.noConflict(true);
+					    jQuery2.noConflict(true);						
 						if (thisPageUsingOtherJSLibrary) {
 							//console.log('Run your jQuery Code');
 							OdendoAuctionsWidget.auctionPopup.runTeamAuctionPlugin();
@@ -67,10 +63,10 @@ OdendoAuctionsWidget.auctionPopup = (function(){
 			};
 		},
 
-		runTeamAuctionPlugin : function (){
-
+		runTeamAuctionPlugin : function (){			
 		    var link = document.createElement('link');
 		    var locale = (typeof odendoData_locale === 'undefined') ? 'da-DK' : odendoData_locale;
+			var open = (typeof odendoData_open === 'undefined') ? 'open' : odendoData_open;
 		    link.id = cssId;
 		    link.rel = 'stylesheet';
 		    link.type = 'text/css';
@@ -106,14 +102,25 @@ OdendoAuctionsWidget.auctionPopup = (function(){
 			auctionPluginContent += '</div></div>';
 
 			jQuery2(document).ready(function (jQuery2) {
-
 				jQuery2.support.cors = true;
 				jQuery2.ajaxSetup({cache: false});
 				jQuery2('body').prepend(auctionPluginContent);
-				jQuery2("#teamAuctionPluginContainer").hide(); //possibly remove these
+				if (open == 'hidden')
+				{
+				jQuery2("#teamAuctionPluginContainer").hide();
 				jQuery2("#allAuctionsContainer").hide();
+				}
+				else if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
+				{
+				jQuery2("#teamAuctionPluginContainer").hide();				
+				jQuery2("#allAuctionsContainer").hide();
+				}
+				else
+				{
+				OdendoAuctionsWidget.auctionPopup.openAuctionPlugin()
+				}
+				
 				OdendoAuctionsWidget.auctionPopup.auctionPluginStylesApply();
-
 			});
 
 			jQuery2(document).ready(function(jQuery2){
@@ -175,7 +182,7 @@ OdendoAuctionsWidget.auctionPopup = (function(){
 
 			OdendoAuctionsWidget.auctionPopup.getButtonImage();
 			OdendoAuctionsWidget.auctionPopup.getBusinessUnit();
-			//openAuctionPlugin(); //like this to open all the time?
+
 
 			//fires each second
 			var auctionTimer = setInterval(function(){OdendoAuctionsWidget.auctionPopup.autionTickDown()}, 1000);
@@ -269,7 +276,6 @@ OdendoAuctionsWidget.auctionPopup = (function(){
 			function complete() {
 				jQuery2("#allAuctionsContainer").slideDown(300, function() { jQuery2(this).css('overflow', 'visible') });
 				if(!jQuery2("#auctionsCloseButtonContainer").length){
-					jQuery2("#allAuctionsContainer").prepend("<div id='auctionsCloseButtonContainer' width:214px onclick='OdendoAuctionsWidget.auctionPopup.closeAuctionPlugin()'></div>");
 					jQuery2("#auctionsCloseButtonContainer").prepend("<img id='auctionPluginCloseButton' src='http://sleeknoteimages.sleeknote.com/default-with-image_close.png'>").hide().fadeIn(400);
 					OdendoAuctionsWidget.auctionPopup.auctionPluginStylesApply();
 				} else jQuery2("#auctionsCloseButtonContainer").fadeIn(400);
@@ -329,8 +335,7 @@ OdendoAuctionsWidget.auctionPopup = (function(){
 			});
 		},
         
-		
-		
+				
 		getAuctions : function (){
 			var getAuctions = jQuery2.ajax({
 				type: 'GET',
